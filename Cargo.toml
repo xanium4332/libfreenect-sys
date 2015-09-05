@@ -1,0 +1,9 @@
+[package]
+name = "libfreenect-sys"
+version = "0.1.0"
+authors = ["James Buckley <xanium4332@gmail.com>"]
+#links = "freenect"
+#build = "build.rs"
+#
+[dependencies]
+libc = "0.1"
