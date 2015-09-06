@@ -16,8 +16,8 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
 }
 
 #[repr(C)] pub struct freenect_device_attributes {
-	next: *mut freenect_device_attributes,
-	camera_serial: *const c_char,
+	pub next: *mut freenect_device_attributes,
+	pub camera_serial: *const c_char,
 }
 
 #[repr(C)] pub enum freenect_resolution {
@@ -64,16 +64,16 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
 }
 
 #[repr(C)] pub struct freenect_frame_mode {
-	reserved: uint32_t,              // unique ID used internally.  The meaning of values may change without notice.  Don't touch or depend on the contents of this field.  We mean it.
-	resolution: freenect_resolution, // Resolution this freenect_frame_mode describes, should you want to find it again with freenect_find_*_frame_mode().
-	dummy: int32_t,                  // The video or depth format that this freenect_frame_mode describes.  The caller should know which of video_format or depth_format to use, since they called freenect_get_*_frame_mode()
-	bytes: int32_t,                  // Total buffer size in bytes to hold a single frame of data.  Should be equivalent to width * height * (data_bits_per_pixel+padding_bits_per_pixel) / 8
-	width: int16_t,                  // Width of the frame, in pixels
-	height: int16_t,                 // Height of the frame, in pixels
-	data_bits_per_pixel: int8_t,     // Number of bits of information needed for each pixel
-	padding_bits_per_pixel: int8_t,  // Number of bits of padding for alignment used for each pixel
-	framerate: int8_t,               // Approximate expected frame rate, in Hz
-	is_valid: int8_t,                // If 0, this freenect_frame_mode is invalid and does not describe a supported mode.  Otherwise, the frame_mode is valid.
+	pub reserved: uint32_t,              // unique ID used internally.  The meaning of values may change without notice.  Don't touch or depend on the contents of this field.  We mean it.
+	pub resolution: freenect_resolution, // Resolution this freenect_frame_mode describes, should you want to find it again with freenect_find_*_frame_mode().
+	pub dummy: int32_t,                  // The video or depth format that this freenect_frame_mode describes.  The caller should know which of video_format or depth_format to use, since they called freenect_get_*_frame_mode()
+	pub bytes: int32_t,                  // Total buffer size in bytes to hold a single frame of data.  Should be equivalent to width * height * (data_bits_per_pixel+padding_bits_per_pixel) / 8
+	pub width: int16_t,                  // Width of the frame, in pixels
+	pub height: int16_t,                 // Height of the frame, in pixels
+	pub data_bits_per_pixel: int8_t,     // Number of bits of information needed for each pixel
+	pub padding_bits_per_pixel: int8_t,  // Number of bits of padding for alignment used for each pixel
+	pub framerate: int8_t,               // Approximate expected frame rate, in Hz
+	pub is_valid: int8_t,                // If 0, this freenect_frame_mode is invalid and does not describe a supported mode.  Otherwise, the frame_mode is valid.
 }
 
 #[repr(C)] pub enum freenect_led_option {
@@ -93,11 +93,11 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
 }
 
 #[repr(C)] pub struct freenect_raw_tilt_state {
-	accelerometer_x: int16_t                  , // Raw accelerometer data for X-axis, see FREENECT_COUNTS_PER_G for conversion
-	accelerometer_y: int16_t                  , // Raw accelerometer data for Y-axis, see FREENECT_COUNTS_PER_G for conversion
-	accelerometer_z: int16_t                  , // Raw accelerometer data for Z-axis, see FREENECT_COUNTS_PER_G for conversion
-	tilt_angle:      int8_t                   , // Raw tilt motor angle encoder information
-	tilt_status: 	 freenect_tilt_status_code, // State of the tilt motor (stopped, moving, etc...)
+	pub accelerometer_x: int16_t                  , // Raw accelerometer data for X-axis, see FREENECT_COUNTS_PER_G for conversion
+	pub accelerometer_y: int16_t                  , // Raw accelerometer data for Y-axis, see FREENECT_COUNTS_PER_G for conversion
+	pub accelerometer_z: int16_t                  , // Raw accelerometer data for Z-axis, see FREENECT_COUNTS_PER_G for conversion
+	pub tilt_angle:      int8_t                   , // Raw tilt motor angle encoder information
+	pub tilt_status: 	 freenect_tilt_status_code, // State of the tilt motor (stopped, moving, etc...)
 }
 
 pub enum freenect_context {}
