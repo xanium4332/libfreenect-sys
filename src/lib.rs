@@ -132,7 +132,7 @@ extern "C" {
 	pub fn freenect_process_events_timeout(ctx: *mut freenect_context, timeout: libc::timeval) -> c_int;
 	pub fn freenect_num_devices(ctx: *mut freenect_context) -> c_int;
 	pub fn freenect_list_device_attributes(ctx: *mut freenect_context, attribute_list: *mut *mut freenect_device_attributes) -> c_int;
-	pub fn freenect_free_device_attributes(ctx: *mut freenect_context, attribute_list: *mut freenect_device_attributes);
+	pub fn freenect_free_device_attributes(attribute_list: *mut freenect_device_attributes);
 	pub fn freenect_supported_subdevices() -> c_int;
 	pub fn freenect_select_subdevices(ctx: *mut freenect_context, subdevs: u32); // Not enum type as bitfield can have multiple choices
 	pub fn freenect_enabled_subdevices(ctx: *mut freenect_context) -> freenect_device_flags;
