@@ -120,7 +120,6 @@ pub enum freenect_usb_context {}
 pub type freenect_log_cb   = extern fn(dev: *mut freenect_context, level: freenect_loglevel, msg: *const c_char);
 pub type freenect_depth_cb = extern fn(dev: *mut freenect_device, depth: *mut c_void, timestamp: uint32_t);
 pub type freenect_video_cb = extern fn(dev: *mut freenect_device, video: *mut c_void, timestamp: uint32_t);
-pub type freenect_chunk_cb = extern fn(buffer: *mut c_void, pkt_data: *mut c_void, pkt_num: c_int, datalen: c_int, user_data: *mut c_void);
 
 #[link(name = "freenect")]
 extern "C" {
@@ -143,8 +142,6 @@ extern "C" {
 	pub fn freenect_get_user(dev: *mut freenect_device) -> *mut c_void;
 	pub fn freenect_set_depth_callback(dev: *mut freenect_device, cb: freenect_depth_cb);
 	pub fn freenect_set_video_callback(dev: *mut freenect_device, cb: freenect_video_cb);
-	pub fn freenect_set_depth_chunk_callback(dev: *mut freenect_device, cb: freenect_chunk_cb);
-	pub fn freenect_set_video_chunk_callback(dev: *mut freenect_device, cb: freenect_chunk_cb);
 	pub fn freenect_set_depth_buffer(dev: *mut freenect_device, buf: *mut c_void) -> c_int;
 	pub fn freenect_set_video_buffer(dev: *mut freenect_device, buf: *mut c_void) -> c_int;
 	pub fn freenect_start_depth(dev: *mut freenect_device) -> c_int;
@@ -169,8 +166,4 @@ extern "C" {
 	pub fn freenect_find_depth_mode(res: freenect_resolution, fmt: freenect_depth_format) -> freenect_frame_mode;
 	pub fn freenect_set_depth_mode(dev: *mut freenect_device, mode: freenect_frame_mode) -> c_int;
 	pub fn freenect_set_flag(dev: *mut freenect_device, flag: freenect_flag, value: freenect_flag_value) -> c_int;
-	pub fn freenect_get_ir_brightness(dev: *mut freenect_device) -> c_int;
-	pub fn freenect_set_ir_brightness(dev: *mut freenect_device, brightness: uint16_t) -> c_int;
-	pub fn freenect_set_fw_address_nui(ctx: *mut freenect_context, fw_ptr: *mut c_uchar, num_bytes: c_uint);
-	pub fn freenect_set_fw_address_k4w(ctx: *mut freenect_context, fw_ptr: *mut c_uchar, num_bytes: c_uint);
 }
