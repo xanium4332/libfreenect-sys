@@ -1,7 +1,19 @@
 #![allow(non_camel_case_types)]
 
 extern crate libc;
-use libc::{c_int, c_uint, c_char, c_uchar, c_void, c_double, int32_t, uint32_t, int16_t, uint16_t, int8_t};
+use libc::{
+	c_void,
+	c_char,
+	c_uchar,
+	c_int,
+	c_uint,
+	int8_t,
+	int16_t,
+	uint16_t,
+	int32_t,
+	uint32_t,
+	c_double,
+};
 
 pub const FREENECT_COUNTS_PER_G: 		c_int = 829;
 pub const FREENECT_DEPTH_MM_MAX_VALUE: 	c_int = 10000;
@@ -49,11 +61,9 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
 }
 
 #[repr(C)] pub enum freenect_flag {
-	// values written to the CMOS register
 	FREENECT_AUTO_EXPOSURE      = 1 << 14,
 	FREENECT_AUTO_WHITE_BALANCE = 1 << 1,
 	FREENECT_RAW_COLOR          = 1 << 4,
-	// registers to be written with 0 or 1
 	FREENECT_MIRROR_DEPTH       = 0x0017,
 	FREENECT_MIRROR_VIDEO       = 0x0047,
 }
