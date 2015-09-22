@@ -15,23 +15,40 @@ use libc::{
     c_double,
 };
 
-pub const FREENECT_COUNTS_PER_G: 		c_int = 819;
+pub const FREENECT_COUNTS_PER_G: 		c_int = 819; // Ticks per G for accelerometer as set per http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
+
+/// Maximum value that a uint16_t pixel will take on in the buffer of any of the FREENECT_DEPTH_MM or FREENECT_DEPTH_REGISTERED frame callbacks
 pub const FREENECT_DEPTH_MM_MAX_VALUE: 	c_int = 10000;
+/// Value indicating that this pixel has no data, when using FREENECT_DEPTH_MM or FREENECT_DEPTH_REGISTERED depth modes
 pub const FREENECT_DEPTH_MM_NO_VALUE: 	c_int = 0;
+/// Maximum value that a uint16_t pixel will take on in the buffer of any of the FREENECT_DEPTH_11BIT, FREENECT_DEPTH_10BIT, FREENECT_DEPTH_11BIT_PACKED, or FREENECT_DEPTH_10BIT_PACKED frame callbacks
 pub const FREENECT_DEPTH_RAW_MAX_VALUE: c_int = 2048;
+/// Value indicating that this pixel has no data, when using FREENECT_DEPTH_11BIT, FREENECT_DEPTH_10BIT, FREENECT_DEPTH_11BIT_PACKED, or FREENECT_DEPTH_10BIT_PACKED
 pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
 
+/// Flags representing devices to open when freenect_open_device() is called.
+/// In particular, this allows libfreenect to grab only a subset of the devices
+/// in the Kinect, so you could (for instance) use libfreenect to handle audio
+/// and motor support while letting OpenNI have access to the cameras.
+/// If a device is not supported on a particular platform, its flag will be ignored.
 #[repr(C)] pub enum freenect_device_flags {
     FREENECT_DEVICE_MOTOR  = 0x01,
     FREENECT_DEVICE_CAMERA = 0x02,
     FREENECT_DEVICE_AUDIO  = 0x04,
 }
 
+/// A struct used in enumeration to give access to serial numbers, so you can
+/// open a particular device by serial rather than depending on index.  This
+/// is most useful if you have more than one Kinect.
 #[repr(C)] pub struct freenect_device_attributes {
-    pub next: *mut freenect_device_attributes,
-    pub camera_serial: *const c_char,
+    pub next: *mut freenect_device_attributes, // Next device in the linked list
+    pub camera_serial: *const c_char, // Serial number of this device's camera subdevice
 }
 
+/// Enumeration of available resolutions.
+/// Not all available resolutions are actually supported for all video formats.
+/// Frame modes may not perfectly match resolutions.  For instance,
+/// FREENECT_RESOLUTION_MEDIUM is 640x488 for the IR camera.
 #[repr(C)] pub enum freenect_resolution {
     FREENECT_RESOLUTION_LOW    = 0, // QVGA - 320x240
     FREENECT_RESOLUTION_MEDIUM = 1, // VGA  - 640x480
@@ -39,6 +56,8 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
     FREENECT_RESOLUTION_DUMMY  = 2147483647, // Dummy value to force enum to be 32 bits wide
 }
 
+/// Enumeration of video frame information states.
+/// See http://openkinect.org/wiki/Protocol_Documentation#RGB_Camera for more information.
 #[repr(C)] pub enum freenect_video_format {
     FREENECT_VIDEO_RGB             = 0, // Decompressed RGB mode (demosaicing done by libfreenect)
     FREENECT_VIDEO_BAYER           = 1, // Bayer compressed mode (raw information from camera)
@@ -50,6 +69,8 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
     FREENECT_VIDEO_DUMMY           = 2147483647, // Dummy value to force enum to be 32 bits wide
 }
 
+/// Enumeration of depth frame states
+/// See http://openkinect.org/wiki/Protocol_Documentation#RGB_Camera for more information.
 #[repr(C)] pub enum freenect_depth_format {
     FREENECT_DEPTH_11BIT        = 0, // 11 bit depth information in one uint16_t/pixel
     FREENECT_DEPTH_10BIT        = 1, // 10 bit depth information in one uint16_t/pixel
@@ -60,19 +81,26 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
     FREENECT_DEPTH_DUMMY        = 2147483647, // Dummy value to force enum to be 32 bits wide
 }
 
+/// Enumeration of flags to toggle features with freenect_set_flag()
 #[repr(C)] pub enum freenect_flag {
+	// values written to the CMOS register
     FREENECT_AUTO_EXPOSURE      = 1 << 14,
     FREENECT_AUTO_WHITE_BALANCE = 1 << 1,
     FREENECT_RAW_COLOR          = 1 << 4,
+	// registers to be written with 0 or 1
     FREENECT_MIRROR_DEPTH       = 0x0017,
     FREENECT_MIRROR_VIDEO       = 0x0047,
 }
 
+/// Possible values for setting each `freenect_flag`
 #[repr(C)] pub enum freenect_flag_value {
     FREENECT_OFF = 0,
     FREENECT_ON  = 1,
 }
 
+/// Structure to give information about the width, height, bitrate,
+/// framerate, and buffer size of a frame in a particular mode, as
+/// well as the total number of bytes needed to hold a single frame.
 #[repr(C)] pub struct freenect_frame_mode {
     pub reserved: uint32_t,              // unique ID used internally.  The meaning of values may change without notice.  Don't touch or depend on the contents of this field.  We mean it.
     pub resolution: freenect_resolution, // Resolution this freenect_frame_mode describes, should you want to find it again with freenect_find_*_frame_mode().
@@ -86,6 +114,8 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
     pub is_valid: int8_t,                // If 0, this freenect_frame_mode is invalid and does not describe a supported mode.  Otherwise, the frame_mode is valid.
 }
 
+/// Enumeration of LED states
+/// See http://openkinect.org/wiki/Protocol_Documentation#Setting_LED for more information.
 #[repr(C)] pub enum freenect_led_option {
     LED_OFF              = 0, // Turn LED off
     LED_GREEN            = 1, // Turn LED to Green
@@ -96,26 +126,30 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
     LED_BLINK_RED_YELLOW = 6, // Make LED blink Red/Yellow
 }
 
+/// Enumeration of tilt motor status
 #[repr(C)] pub enum freenect_tilt_status_code {
     TILT_STATUS_STOPPED = 0x00, // Tilt motor is stopped
     TILT_STATUS_LIMIT   = 0x01, // Tilt motor has reached movement limit
     TILT_STATUS_MOVING  = 0x04, // Tilt motor is currently moving to new position
 }
 
+/// Data from the tilt motor and accelerometer
 #[repr(C)] pub struct freenect_raw_tilt_state {
-    pub accelerometer_x: int16_t                  , // Raw accelerometer data for X-axis, see FREENECT_COUNTS_PER_G for conversion
-    pub accelerometer_y: int16_t                  , // Raw accelerometer data for Y-axis, see FREENECT_COUNTS_PER_G for conversion
-    pub accelerometer_z: int16_t                  , // Raw accelerometer data for Z-axis, see FREENECT_COUNTS_PER_G for conversion
-    pub tilt_angle:      int8_t                   , // Raw tilt motor angle encoder information
+    pub accelerometer_x: int16_t,					// Raw accelerometer data for X-axis, see FREENECT_COUNTS_PER_G for conversion
+    pub accelerometer_y: int16_t,					// Raw accelerometer data for Y-axis, see FREENECT_COUNTS_PER_G for conversion
+    pub accelerometer_z: int16_t,					// Raw accelerometer data for Z-axis, see FREENECT_COUNTS_PER_G for conversion
+    pub tilt_angle:      int8_t, 					// Raw tilt motor angle encoder information
     pub tilt_status: 	 freenect_tilt_status_code, // State of the tilt motor (stopped, moving, etc...)
 }
 
-pub enum freenect_context {}
+pub enum freenect_context {} // Holds information about the usb context.
 
-pub enum freenect_device {}
+pub enum freenect_device {} // Holds device information.
 
-pub enum freenect_usb_context {}
+// usb backend specific section
+pub enum freenect_usb_context {} // Holds libusb-1.0 context
 
+/// Enumeration of message logging levels
 #[repr(C)] pub enum freenect_loglevel {
     FREENECT_LOG_FATAL = 0,     // Log for crashing/non-recoverable errors
     FREENECT_LOG_ERROR,         // Log for major errors
@@ -127,8 +161,12 @@ pub enum freenect_usb_context {}
     FREENECT_LOG_FLOOD,         // Log EVERYTHING. May slow performance.
 }
 
+/// Typedef for logging callback functions
 pub type freenect_log_cb   = extern fn(dev: *mut freenect_context, level: freenect_loglevel, msg: *const c_char);
+
+/// Typedef for depth image received event callbacks
 pub type freenect_depth_cb = extern fn(dev: *mut freenect_device, depth: *mut c_void, timestamp: uint32_t);
+/// Typedef for video image received event callbacks
 pub type freenect_video_cb = extern fn(dev: *mut freenect_device, video: *mut c_void, timestamp: uint32_t);
 
 #[link(name = "freenect")]
