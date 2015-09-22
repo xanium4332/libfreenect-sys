@@ -4,12 +4,9 @@ extern crate libc;
 use libc::{
     c_void,
     c_char,
-    c_uchar,
     c_int,
-    c_uint,
     int8_t,
     int16_t,
-    uint16_t,
     int32_t,
     uint32_t,
     c_double,
