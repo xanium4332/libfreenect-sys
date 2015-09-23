@@ -12,16 +12,16 @@ use libc::{
     c_double,
 };
 
-pub const FREENECT_COUNTS_PER_G: 		c_int = 819; // Ticks per G for accelerometer as set per http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
+pub const FREENECT_COUNTS_PER_G: c_int = 819; // Ticks per G for accelerometer as set per http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
 
 /// Maximum value that a uint16_t pixel will take on in the buffer of any of the FREENECT_DEPTH_MM or FREENECT_DEPTH_REGISTERED frame callbacks
-pub const FREENECT_DEPTH_MM_MAX_VALUE: 	c_int = 10000;
+pub const FREENECT_DEPTH_MM_MAX_VALUE: c_int = 10000;
 /// Value indicating that this pixel has no data, when using FREENECT_DEPTH_MM or FREENECT_DEPTH_REGISTERED depth modes
-pub const FREENECT_DEPTH_MM_NO_VALUE: 	c_int = 0;
+pub const FREENECT_DEPTH_MM_NO_VALUE: c_int = 0;
 /// Maximum value that a uint16_t pixel will take on in the buffer of any of the FREENECT_DEPTH_11BIT, FREENECT_DEPTH_10BIT, FREENECT_DEPTH_11BIT_PACKED, or FREENECT_DEPTH_10BIT_PACKED frame callbacks
 pub const FREENECT_DEPTH_RAW_MAX_VALUE: c_int = 2048;
 /// Value indicating that this pixel has no data, when using FREENECT_DEPTH_11BIT, FREENECT_DEPTH_10BIT, FREENECT_DEPTH_11BIT_PACKED, or FREENECT_DEPTH_10BIT_PACKED
-pub const FREENECT_DEPTH_RAW_NO_VALUE: 	c_int = 2047;
+pub const FREENECT_DEPTH_RAW_NO_VALUE: c_int = 2047;
 
 /// Flags representing devices to open when freenect_open_device() is called.
 /// In particular, this allows libfreenect to grab only a subset of the devices
