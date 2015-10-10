@@ -4,7 +4,9 @@ extern crate libc;
 use libc::{
     c_void,
     c_char,
+    c_uchar,
     c_int,
+    c_uint,
     int8_t,
     int16_t,
     int32_t,
@@ -84,9 +86,10 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: c_int = 2047;
     FREENECT_AUTO_EXPOSURE      = 1 << 14,
     FREENECT_AUTO_WHITE_BALANCE = 1 << 1,
     FREENECT_RAW_COLOR          = 1 << 4,
-    // registers to be written with 0 or 1
-    FREENECT_MIRROR_DEPTH       = 0x0017,
-    FREENECT_MIRROR_VIDEO       = 0x0047,
+    // arbitrary bitfields to support flag combination
+    FREENECT_MIRROR_DEPTH       = 1 << 16,
+    FREENECT_MIRROR_VIDEO       = 1 << 17,
+	FREENECT_NEAR_MODE          = 1 << 18, // K4W only
 }
 
 /// Possible values for setting each `freenect_flag`
@@ -113,7 +116,7 @@ pub const FREENECT_DEPTH_RAW_NO_VALUE: c_int = 2047;
 
 /// Enumeration of LED states
 /// See http://openkinect.org/wiki/Protocol_Documentation#Setting_LED for more information.
-#[repr(C)] pub enum freenect_led_option {
+#[repr(C)] pub enum freenect_led_options {
     LED_OFF              = 0, // Turn LED off
     LED_GREEN            = 1, // Turn LED to Green
     LED_RED              = 2, // Turn LED to Red
@@ -165,6 +168,8 @@ pub type freenect_log_cb   = extern fn(dev: *mut freenect_context, level: freene
 pub type freenect_depth_cb = extern fn(dev: *mut freenect_device, depth: *mut c_void, timestamp: uint32_t);
 /// Typedef for video image received event callbacks
 pub type freenect_video_cb = extern fn(dev: *mut freenect_device, video: *mut c_void, timestamp: uint32_t);
+/// Typedef for stream chunk processing callbacks
+pub type freenect_chunk_cb = extern fn(buffer: *mut c_void, pkt_data: *mut c_void, pkt_num: c_int, datalen: c_int, user_data: *mut c_void);
 
 #[link(name = "freenect")]
 extern "C" {
@@ -173,7 +178,7 @@ extern "C" {
     pub fn freenect_set_log_level(ctx: *mut freenect_context, level: freenect_loglevel);
     pub fn freenect_set_log_callback(ctx: *mut freenect_context, cb: freenect_log_cb);
     pub fn freenect_process_events(ctx: *mut freenect_context) -> c_int;
-    pub fn freenect_process_events_timeout(ctx: *mut freenect_context, timeout: libc::timeval) -> c_int;
+    pub fn freenect_process_events_timeout(ctx: *mut freenect_context, timeout: *mut libc::timeval) -> c_int;
     pub fn freenect_num_devices(ctx: *mut freenect_context) -> c_int;
     pub fn freenect_list_device_attributes(ctx: *mut freenect_context, attribute_list: *mut *mut freenect_device_attributes) -> c_int;
     pub fn freenect_free_device_attributes(attribute_list: *mut freenect_device_attributes);
@@ -187,6 +192,8 @@ extern "C" {
     pub fn freenect_get_user(dev: *mut freenect_device) -> *mut c_void;
     pub fn freenect_set_depth_callback(dev: *mut freenect_device, cb: freenect_depth_cb);
     pub fn freenect_set_video_callback(dev: *mut freenect_device, cb: freenect_video_cb);
+    pub fn freenect_set_depth_chunk_callback(dev: *mut freenect_device, cb: freenect_chunk_cb);
+    pub fn freenect_set_video_chunk_callback(dev: *mut freenect_device, cb: freenect_chunk_cb);
     pub fn freenect_set_depth_buffer(dev: *mut freenect_device, buf: *mut c_void) -> c_int;
     pub fn freenect_set_video_buffer(dev: *mut freenect_device, buf: *mut c_void) -> c_int;
     pub fn freenect_start_depth(dev: *mut freenect_device) -> c_int;
@@ -198,7 +205,7 @@ extern "C" {
     pub fn freenect_get_tilt_degs(state: *mut freenect_raw_tilt_state) -> c_double;
     pub fn freenect_set_tilt_degs(dev: *mut freenect_device, angle: c_double) -> c_int;
     pub fn freenect_get_tilt_status(state: *mut freenect_raw_tilt_state) -> freenect_tilt_status_code;
-    pub fn freenect_set_led(dev: *mut freenect_device, option: freenect_led_option) -> c_int;
+    pub fn freenect_set_led(dev: *mut freenect_device, option: freenect_led_options) -> c_int;
     pub fn freenect_get_mks_accel(state: *mut freenect_raw_tilt_state, x: *mut c_double, y: *mut c_double, z: *mut c_double);
     pub fn freenect_get_video_mode_count() -> c_int;
     pub fn freenect_get_video_mode(mode_num: c_int) -> freenect_frame_mode;
@@ -211,4 +218,6 @@ extern "C" {
     pub fn freenect_find_depth_mode(res: freenect_resolution, fmt: freenect_depth_format) -> freenect_frame_mode;
     pub fn freenect_set_depth_mode(dev: *mut freenect_device, mode: freenect_frame_mode) -> c_int;
     pub fn freenect_set_flag(dev: *mut freenect_device, flag: freenect_flag, value: freenect_flag_value) -> c_int;
+    pub fn freenect_set_fw_address_nui(ctx: *mut freenect_context, fw_ptr: *mut c_uchar, num_bytes: c_uint);
+    pub fn freenect_set_fw_address_k4w(ctx: *mut freenect_context, fw_ptr: *mut c_uchar, num_bytes: c_uint);
 }
