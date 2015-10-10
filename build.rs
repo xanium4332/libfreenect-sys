@@ -3,7 +3,7 @@ extern crate cmake;
 
 fn main() {
     // Try and find system libfreenect library. If not, attempt to build from source.
-    let found = pkg_config::Config::new().atleast_version("0.5").find("libfreenect").is_ok();
+    let found = pkg_config::Config::new().atleast_version("0.5.2").find("libfreenect").is_ok();
 
     if found {
         return;
