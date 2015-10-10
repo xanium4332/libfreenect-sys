@@ -9,11 +9,16 @@ However, it is currently missing declarations for audio- and registration-based
 functions.
 
 ## Dependencies
-The system-wide `libfreenect` library is detected using `pkg_config`. If the
+The system-wide `libfreenect` library is detected using `pkg-config`. If the
 library is present and version >= 0.5.2, this crate will merely link to the
 system library.
 
 If no system library is found, this crate will compile and statically link
 against the in-tree included `libfreenect`. In this case a dependency on the
-`libusb-sys` crate is required in order to provide a working `libusb`
-implementation.
+[`libusb-sys`](https://crates.io/crates/libusb-sys) crate is required in order
+to provide a working `libusb` implementation.
+
+## License
+Copyright © 2015 James Buckley
+
+Distributed under the [MIT License](LICENSE).
